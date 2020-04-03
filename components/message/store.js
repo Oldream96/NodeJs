@@ -12,13 +12,23 @@ function addMessage(message){
 }
 
 async function getMessage(filterUser){
-    let filter = {};
-    if(filterUser !== null){
-        filter.user = new RegExp(filterUser,"i");
-        //filter= {user :filterUser};
-    }
-    const messages = await Model.find(filter);
-    return messages;
+    return new Promise((resolve,reject) => {
+        let filter = {};
+        if(filterUser !== null){
+            //filter.user = new RegExp(filterUser,"i");   //PARA BUSCAR COMO %% EN SQL
+            filter= {user :filterUser};  //BUSQUEDAS EXACTAS CASI SIEMPRE SE USAN CON IDS
+        }
+        const messages = Model.find(filter)
+        .populate('user')
+        .exec((error,populated) => {
+            if(error){
+                reject(error);
+                return false;
+            }
+            resolve(populated)
+        })
+        //resolve(messages);
+    })
 }
 
 

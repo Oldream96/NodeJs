@@ -12,7 +12,6 @@ async function getUser(filterUser){
     if(filterUser !== null){
         filter.name = new RegExp(filterUser,"i");
     }
-    console.log(`el filtro ${filterUser}`);
     const users = await Model.find(filter);
     return users;
 }

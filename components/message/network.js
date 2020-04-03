@@ -1,13 +1,28 @@
 const express = require('express');
 const router = express.Router();
-
 const response = require('../../network/response');
-
-
 const controller = require('./controller')
+const multer = require('multer'); //para subida de archivos
+const path = require("path")
+
+const storage = multer.diskStorage({   //para guardar imagen con su extensión
+    destination : "public/files/",
+    filename : function (req, file, cb) {
+        cb(null, file.fieldname + "-" + Date.now() + 
+        path.extname(file.originalname))
+    }
+})
+
+const upload = multer({ storage: storage }); //para guardar imagen con su extensión
+
+// const upload = multer({
+//     destination : 'uploads/',    //en binario guarda por defecto archivo
+// })
 
 router.get('/', (req, res)=>{
-    const filterMessages = req.query.user || null;
+    const filterMessages = req.query.chat || null;
+    console.log(filterMessages);
+    
     controller.getMessages(filterMessages)
     .then((messageList) => {
         response.success(req,res,messageList,200)
@@ -18,8 +33,8 @@ router.get('/', (req, res)=>{
         });
 } );
 
-router.post('/', (req, res)=>{
-    controller.addMessage(req.body.user,req.body.message)
+router.post('/', upload.single('file') , (req, res)=>{
+    controller.addMessage(req.body.chat,req.body.user,req.body.message,req.file)
     .then((fullMessage) =>{
         response.success(req,res,fullMessage,201);
     }).catch(()=>{

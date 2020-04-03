@@ -7,7 +7,7 @@ async function connect(url){
             useNewUrlParser: true,
             useUnifiedTopology: true
     }).then(() => {
-        console.log('conectado de verdad')
+        console.log('conectado a MongoDB')
     }).catch((error) => {
         console.error(error);
     } )  ;
